@@ -63,7 +63,7 @@ public int countMines(int row, int col)
   int count = 0;
   if(isValid(row,col-1) == true && mines.contains(buttons[row][col-1]))
   count++;
-  if(isValid(row,col+1) == true && mines.contains(buttons[row][col+1]))
+   if(isValid(row,col+1) == true && mines.contains(buttons[row][col+1]))
   count++;
   if(isValid(row-1,col-1) == true && mines.contains(buttons[row-1][col-1]))
   count++;
@@ -81,7 +81,7 @@ public int countMines(int row, int col)
 }
 public class MSButton
 {
-    private int myRow, myCol;
+    private int r, c;
     private float x,y, width, height;
     private boolean clicked, flagged;
     private String myLabel;
@@ -90,10 +90,10 @@ public class MSButton
     {
         width = 400/NUM_COLS;
         height = 400/NUM_ROWS;
-        myRow = row;
-        myCol = col; 
-        x = myCol*width;
-        y = myRow*height;
+        r = row;
+        c = col; 
+        x = c*width;
+        y = r*height;
         myLabel = "";
         flagged = clicked = false;
         Interactive.add( this ); // register it with the manager
@@ -103,8 +103,32 @@ public class MSButton
     public void mousePressed () 
     {
         clicked = true;
-        //your code here
-    }
+        if(mouseButton == RIGHT){
+          if(flagged == true){
+            flagged = false;
+            clicked = false;
+          }
+          else if(flagged == false)
+            flagged = true;
+        }
+        else if(mines.contains(this))
+          displayLosingMessage();
+        else if(countMines(r,c) > 0)
+          setLabel("" + countMines(r,c));
+        else{
+          if(isValid(r,c-1) && buttons[r][c-1].clicked == false)
+             buttons[r][c-1].mousePressed();
+          if(isValid(r,c+1) && buttons[r][c-1].clicked == false)
+             buttons[r][c+1].mousePressed();
+          if(isValid(r-1,c-1) && buttons[r-1][c-1].clicked == false)
+            buttons[r-1][c-1].mousePressed();
+          if(isValid(r-1,c) && buttons[r-1][c].clicked == false)
+            buttons[r-1][c].mousePressed();
+            
+        }
+    }        
+          
+
     public void draw () 
     {    
         if (flagged)
