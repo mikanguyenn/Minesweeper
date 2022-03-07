@@ -20,26 +20,26 @@ void setup ()
         buttons[r][c] = new MSButton(r,c);
       }
     }
-    
+    for(int i = 0; i < 50; i++)
     setMines();
 }
 public void setMines(){
-  for(int i = 0; i < 80; i++){
-    final int r = (int)(Math.random()*NUM_ROWS);
-    final int c = (int)(Math.random()*NUM_COLS);
-    if(!mines.contains(buttons[r][c])){
+  
+    int r = (int)(Math.random()*NUM_ROWS);
+    int c = (int)(Math.random()*NUM_COLS);
+    if(mines.contains(buttons[r][c]))
+      setMines();
+    else
       mines.add(buttons[r][c]);
-    }
-      i++;
-  }
 }
 
 public void draw ()
 {
     background( 0 );
-    if(isWon() == true)
+    if(isWon()){
         displayWinningMessage();
         noLoop();
+    }
 }
 public boolean isWon()
 {
@@ -50,6 +50,7 @@ public boolean isWon()
   }
   return true;
 }
+
 public void displayLosingMessage()
 {
   for(int i=0;i<mines.size();i++)
@@ -59,6 +60,7 @@ public void displayLosingMessage()
     buttons[NUM_ROWS/2][(NUM_COLS/2)-4].setLabel("Y");
     buttons[NUM_ROWS/2][(NUM_COLS/2)-3].setLabel("O");
     buttons[NUM_ROWS/2][(NUM_COLS/2)-2].setLabel("U");
+    buttons[NUM_ROWS/2][(NUM_COLS/2)-1].setLabel("");
     buttons[NUM_ROWS/2][(NUM_COLS/2)].setLabel("L");
     buttons[NUM_ROWS/2][(NUM_COLS/2)+1].setLabel("O");
     buttons[NUM_ROWS/2][(NUM_COLS/2)+2].setLabel("S");
@@ -69,6 +71,7 @@ public void displayWinningMessage()
     buttons[NUM_ROWS/2][(NUM_COLS/2)-3].setLabel("Y");
     buttons[NUM_ROWS/2][(NUM_COLS/2)-2].setLabel("O");
     buttons[NUM_ROWS/2][(NUM_COLS/2)-1].setLabel("U");
+    buttons[NUM_ROWS/2][(NUM_COLS/2)].setLabel("");
     buttons[NUM_ROWS/2][(NUM_COLS/2)+1].setLabel("W");
     buttons[NUM_ROWS/2][(NUM_COLS/2)+2].setLabel("I");
     buttons[NUM_ROWS/2][(NUM_COLS/2)+3].setLabel("N");
@@ -123,6 +126,7 @@ public class MSButton
     // called by manager
     public void mousePressed () 
     {
+        
         clicked = true;
         if(mouseButton == RIGHT){
           if(flagged == true){
@@ -134,25 +138,17 @@ public class MSButton
         }
         else if(mines.contains(this))
           displayLosingMessage();
+          
         else if(countMines(r,c) > 0)
-          setLabel(str(countMines(r,c)));
+          setLabel("" + countMines(r,c));
+          
         else{
-          if(isValid(r,c-1) && buttons[r][c-1].clicked == false)
-             buttons[r][c-1].mousePressed();
-          if(isValid(r,c+1) && buttons[r][c-1].clicked == false)
-             buttons[r][c+1].mousePressed();
-          if(isValid(r-1,c-1) && buttons[r-1][c-1].clicked == false)
-            buttons[r-1][c-1].mousePressed();
-          if(isValid(r-1,c) && buttons[r-1][c].clicked == false)
-            buttons[r-1][c].mousePressed();
-          if(isValid(r-1,c+1) && buttons[r-1][c+1].clicked == false)
-            buttons[r-1][c+1].mousePressed();
-          if(isValid(r+1,c-1) && buttons[r+1][c-1].clicked == false)
-            buttons[r+1][c-1].mousePressed();
-          if(isValid(r+1,c) && buttons[r+1][c].clicked == false)
-            buttons[r+1][c].mousePressed();
-          if(isValid(r+1,c+1) && buttons[r+1][c+1].clicked == false)
-            buttons[r+1][c+1].mousePressed();
+          for(int i = -1; i < 2; i++){
+            for(int j = -1; j < 2; j++){
+              if(isValid(i + r, j + c) && buttons[i + r][j + c].clicked == false)
+                buttons[i +r][j + c].mousePressed();
+            }
+          }
             
         }
     }        
