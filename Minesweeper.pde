@@ -20,26 +20,22 @@ void setup ()
         buttons[r][c] = new MSButton(r,c);
       }
     }
-    for(int i = 0; i < 50; i++)
     setMines();
 }
 public void setMines(){
-  
+  for(int i = 0; i < 50; i++){
     int r = (int)(Math.random()*NUM_ROWS);
     int c = (int)(Math.random()*NUM_COLS);
-    if(mines.contains(buttons[r][c]))
-      setMines();
-    else
-      mines.add(buttons[r][c]);
+    if(!mines.contains(buttons[r][c]))
+        mines.add(buttons[r][c]);
+  }
 }
 
 public void draw ()
 {
     background( 0 );
-    if(isWon()){
+    if(isWon())
         displayWinningMessage();
-        noLoop();
-    }
 }
 public boolean isWon()
 {
@@ -68,6 +64,7 @@ public void displayLosingMessage()
 }
 public void displayWinningMessage()
 {
+    buttons[NUM_ROWS/2][(NUM_COLS/2)-4].setLabel("");
     buttons[NUM_ROWS/2][(NUM_COLS/2)-3].setLabel("Y");
     buttons[NUM_ROWS/2][(NUM_COLS/2)-2].setLabel("O");
     buttons[NUM_ROWS/2][(NUM_COLS/2)-1].setLabel("U");
@@ -78,30 +75,18 @@ public void displayWinningMessage()
 }
 public boolean isValid(int r, int c)
 {
-    if(r < NUM_ROWS||r >= NUM_ROWS|| c < NUM_COLS||c >= NUM_COLS)  
-    return true;
-    return false;
+    return (r<NUM_ROWS && r>=0) && (c<NUM_COLS && c>=0);
 }
 public int countMines(int row, int col)
 {
   int count = 0;
-  if(isValid(row,col-1) == true && mines.contains(buttons[row][col-1]))
-  count++;
-   if(isValid(row,col+1) == true && mines.contains(buttons[row][col+1]))
-  count++;
-  if(isValid(row-1,col-1) == true && mines.contains(buttons[row-1][col-1]))
-  count++;
-  if(isValid(row-1,col) == true && mines.contains(buttons[row-1][col]))
-  count++;
-  if(isValid(row-1,col+1) == true && mines.contains(buttons[row-1][col+1]))
-  count++;
-  if(isValid(row+1,col-1) == true && mines.contains(buttons[row+1][col-1]))
-  count++;
-  if(isValid(row+1,col) == true && mines.contains(buttons[row+1][col]))
-  count++;
-  if(isValid(row+1,col+1) == true && mines.contains(buttons[row+1][col+1]))
-  count++;    
-  return count;
+ for(int i = -1; i < 2; i++){
+   for(int j = -1; j < 2; j++){
+     if(isValid(row+i,col+j) && mines.contains(buttons[row+i][col+j]))
+     count++;
+   }
+ }
+ return count;
 }
 public class MSButton
 {
@@ -127,15 +112,10 @@ public class MSButton
     public void mousePressed () 
     {
         
-        clicked = true;
-        if(mouseButton == RIGHT){
-          if(flagged == true){
-            flagged = false;
-            clicked = false;
-          }
-          else if(flagged == false)
-            flagged = true;
-        }
+        if(mouseButton == LEFT)
+            clicked = true;
+        if(mouseButton == RIGHT)
+            flagged = !flagged;
         else if(mines.contains(this))
           displayLosingMessage();
           
